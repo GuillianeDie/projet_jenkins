@@ -65,11 +65,12 @@ pipeline {
             }
         }
 
-        // ── Stage 2 : Compiler ───────────────────────
+// ── Stage 2 : Compiler ───────────────────────
         stage('Build') {
             steps {
-                bat 'mvn clean compile -B'
-                // -B = batch mode (pas de couleurs, logs Jenkins-friendly)
+                dir('ICDE848') { // On dit à Jenkins d'entrer dans ce dossier
+                    bat 'mvn clean compile -B'
+                }
             }
         }
 
