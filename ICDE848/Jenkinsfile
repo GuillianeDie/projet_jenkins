@@ -159,35 +159,33 @@ pipeline {
                 echo "Artefact archivé avec succès"
             }
         }
+        stage('Déclenchement Chaîné') {
+            steps {
+                echo "Appel du job de qualité secondaire..."
+                // On déclenche le job B. wait: false permet de ne pas bloquer ce pipeline
+                build job: 'boutique-qualite', wait: false
+            }
+        }
+    }
 
-    } // fin stages
-
-    // ─────────────────────────────────────────────────
-    // POST — Actions après tous les stages
-    // ─────────────────────────────────────────────────
     post {
         always {
             echo "Pipeline terminée — statut : ${currentBuild.currentResult}"
         }
         failure {
             emailext(
-                subject: "❌ FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """Le build a échoué.
-Projet  : ${env.JOB_NAME}
-Build   : #${env.BUILD_NUMBER}
-Branche : ${env.GIT_BRANCH}
-URL     : ${env.BUILD_URL}
-Consulter les logs : ${env.BUILD_URL}console""",
-                to:          'equipe-dev@monentreprise.fr',
-                attachLog:   true
+                subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "Le build a échoué. Consultez les logs ici : ${env.BUILD_URL}",
+                to: 'guilliane.dieppois@gmail.com',
+                attachLog: true
             )
         }
         fixed {
             emailext(
-                subject: "✅ FIXED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body:    "Le build est de nouveau stable : ${env.BUILD_URL}",
-                to:      'equipe-dev@monentreprise.fr'
+                subject: "FIXED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "Le build est de nouveau stable : ${env.BUILD_URL}",
+                to: 'guilliane.dieppois@gmail.com' 
             )
         }
-    } // fin post
-} // fin pipeline
+    }
+}
