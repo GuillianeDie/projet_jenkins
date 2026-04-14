@@ -5,7 +5,7 @@ package fr.epsi.model;
  * ICDE848 – TP Jenkins
  */
 public class Article {
-
+ 
     private String nom;
     private double prix;
 
